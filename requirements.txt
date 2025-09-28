@@ -1,0 +1,9 @@
+langgraph
+langchain
+langchain-core
+logging
+langchain_community
+wikipedia
+transformers
+langchain_huggingface
+torch
