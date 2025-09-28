@@ -28,7 +28,7 @@ hf_pipeline = pipeline(
 )
 llm = HuggingFacePipeline(pipeline=hf_pipeline)
 print("✅ Using Hugging Face DialoGPT model (free, local)")
-llm.invoke("Hello, how are you?")
-
+response = llm.invoke("Hello, how are you?")
+print("LLM Response:", response)
 
 logger = setup_logger("graph")
