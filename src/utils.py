@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 def setup_logger(name: str, level = logging.INFO):
-    log_dir = Path(__file__).parent / "logs"
+    log_dir = Path(__file__).parent.parent / "logs"
     log_dir.mkdir(exist_ok=True)
 
     # Create a custom logger

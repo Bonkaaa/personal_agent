@@ -1,9 +1,11 @@
 langgraph
 langchain
 langchain-core
-logging
 langchain_community
+langchain_huggingface
+langchain-ollama
 wikipedia
 transformers
-langchain_huggingface
 torch
+requests
+python-dotenv

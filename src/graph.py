@@ -1,5 +1,6 @@
 from langgraph.graph import StateGraph, START, END, add_messages
-from langchain_ollama import OllamaLLM
+from langchain_huggingface import HuggingFacePipeline
+from transformers import pipeline
 from langchain_core.messages import AnyMessage, HumanMessage, AIMessage
 
 from src.prompts import SUMMARIZE_PROMPT_SYSTEM, SUMMARIZE_PROMPT_USER
@@ -16,7 +17,16 @@ class State(TypedDict):
 
     
 
-llm = OllamaLLM(model="llama2", temperature=0.7)
+hf_pipeline = pipeline(
+    "text-generation",
+    model="microsoft/DialoGPT-medium",  # Free, lightweight model
+    tokenizer="microsoft/DialoGPT-medium",
+    max_length=512,
+    temperature=0.7,
+    do_sample=True,
+)
+llm = HuggingFacePipeline(pipeline=hf_pipeline)
+
 logger = setup_logger("graph")
 
 def search_node(state: State) -> State:
