@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, START, END, add_messages
 from langchain_huggingface import HuggingFacePipeline
 from transformers import pipeline
-from langchain_core.messages import AnyMessage, HumanMessage, AIMessage
+from langchain_core.messages import AnyMessage, HumanMessage, AIMessage, SystemMessage
 
 from src.prompts import SUMMARIZE_PROMPT_SYSTEM, SUMMARIZE_PROMPT_USER
 from .utils import setup_logger
@@ -18,9 +18,9 @@ class State(TypedDict):
     
 
 hf_pipeline = pipeline(
-    "text-generation",
-    model="microsoft/DialoGPT-medium",  # Free, lightweight model
-    tokenizer="microsoft/DialoGPT-medium",
+    "text2text-generation",
+    model="google/flan-t5-small",  # Free, lightweight model
+    tokenizer="google/flan-t5-small",
     max_length=512,
     temperature=0.7,
     do_sample=True,
@@ -47,18 +47,24 @@ def search_node(state: State) -> State:
 def summarize_node(state: State) -> State:
     result = state["search_results"]
     
-    summarize_prompt_system = SUMMARIZE_PROMPT_SYSTEM
-    summarize_prompt_user = SUMMARIZE_PROMPT_USER.format(search_results=result)
+    prompt = """
+    You are a helpful study assistant that summarizes text. 
+    You will be provided with search results to summarize. 
+    Summarize the following text in a concise manner, focusing on the key points and main ideas. 
+    Use clear and simple language that can be understood by a high school student.
+    # Search Results:
+    {search_results}
+    """
 
-    system_message = AIMessage(content=summarize_prompt_system)
-    user_message = HumanMessage(content=summarize_prompt_user)
+    prompt = prompt.format(search_results=result)
 
-    state["messages"].extend([system_message, user_message])
+    state["messages"].append(HumanMessage(content=prompt))
 
     try:
-        full_prompt = f"{summarize_prompt_system}\n\nUser:\n{summarize_prompt_user}"
+        full_prompt = f"{prompt}"
         response = llm.invoke(full_prompt)
-        cleaned_response = response.strip() if hasattr(response, 'strip') else str(response)
+        cleaned_response = response.strip() if response else "No response from LLM."
+
     except Exception as e:
         logger.error(f"LLM invocation failed: {e}")
         cleaned_response = "Error generating summary."
