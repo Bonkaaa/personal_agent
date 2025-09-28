@@ -55,13 +55,13 @@ def summarize_node(state: State) -> State:
 
     state["messages"].extend([system_message, user_message])
 
-    # try:
-    full_prompt = f"{summarize_prompt_system}\n\nUser:\n{summarize_prompt_user}"
-    response = llm.invoke(full_prompt)
-    cleaned_response = response.strip() if hasattr(response, 'strip') else str(response)
-    # except Exception as e:
-    #     logger.error(f"LLM invocation failed: {e}")
-    #     cleaned_response = "Error generating summary."
+    try:
+        full_prompt = f"{summarize_prompt_system}\n\nUser:\n{summarize_prompt_user}"
+        response = llm.invoke(full_prompt)
+        cleaned_response = response.strip() if hasattr(response, 'strip') else str(response)
+    except Exception as e:
+        logger.error(f"LLM invocation failed: {e}")
+        cleaned_response = "Error generating summary."
     
     logger.info(f"LLM response: {cleaned_response}")
     state["answer"] = cleaned_response
@@ -99,8 +99,3 @@ if __name__ == "__main__":
     print("Question:", result["question"])
     print("Search Results:", result["search_results"])
     print("Answer:", result["answer"])
-
-    print("\n--- Conversation History ---")
-    for msg in result["messages"]:
-        role = msg.__class__.__name__.replace("Message", "").upper()
-        print(f"{role}: {msg.content}")
