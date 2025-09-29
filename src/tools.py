@@ -21,7 +21,7 @@ def wiki_search(term):
         "list": "search",
         "srsearch": term,
         "format": "json",
-        "srlimit": 3
+        "srlimit": 1
     }
 
     headers = {

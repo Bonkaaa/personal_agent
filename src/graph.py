@@ -50,7 +50,7 @@ def summarize_node(state: State) -> State:
     prompt = """
     You are a helpful study assistant that summarizes text. 
     You will be provided with search results to summarize. 
-    Summarize the following text in a concise manner, focusing on the key points and main ideas. 
+    Summarize the following text in a sentence, no more than 50 words.
     Use clear and simple language that can be understood by a high school student.
     # Search Results:
     {search_results}
